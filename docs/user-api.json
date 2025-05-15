@@ -1,0 +1,390 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "User API",
+    "description": "User API for managing user accounts",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000"
+    }
+  ],
+  "paths": {
+    "/api/users": {
+      "post": {
+        "description": "Register a new user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "leonardo": {
+                  "description": "Register user Leonardo",
+                  "value": {
+                    "username": "leonardo54",
+                    "password": "leonardo123",
+                    "name": "Leonardo"
+                  }
+                }
+              },
+              "schema": {
+                "type": "object",
+                "required": [
+                  "username",
+                  "password",
+                  "name"
+                ],
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User registered successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": {
+                    "description": "User registered successfully",
+                    "value": {
+                      "data": {
+                        "id": 1,
+                        "username": "leonardo54",
+                        "name": "Leonardo"
+                      },
+                      "errors": null
+                    }
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "number"
+                        },
+                        "username": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "errors": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request error",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "validation_error": {
+                    "description": "One of the field is empty",
+                    "value": {
+                      "data": null,
+                      "errors": {
+                        "username": [
+                          "Username is required"
+                        ],
+                        "password": [
+                          "Password is required"
+                        ],
+                        "name": [
+                          "Name is required"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/login": {
+      "post": {
+        "description": "Login a user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "leonardo": {
+                  "description": "Login user Leonardo",
+                  "value": {
+                    "username": "leonardo54",
+                    "password": "leonardo123"
+                  }
+                }
+              },
+              "schema": {
+                "type": "object",
+                "required": [
+                  "username",
+                  "password"
+                ],
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User logged in successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "number"
+                        },
+                        "username": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "token": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "errors": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "example": {
+                  "success": {
+                    "description": "User logged in successfully",
+                    "value": {
+                      "data": {
+                        "id": 1,
+                        "username": "leonardo54",
+                        "name": "Leonardo",
+                        "token": "abc123xyz"
+                      },
+                      "errors": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User logged in failed",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "credential_error": {
+                    "description": "Username or password wrong",
+                    "value": {
+                      "data": null,
+                      "errors": {
+                        "username": [
+                          "username wrong"
+                        ],
+                        "password": [
+                          "password wrong"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/current": {
+      "get": {
+        "description": "Get current user",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Token for get current user",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current user retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "number"
+                        },
+                        "username": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "errors": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "example": {
+                  "success": {
+                    "description": "Current user retrieved successfully",
+                    "value": {
+                      "data": {
+                        "id": 1,
+                        "username": "leonardo54",
+                        "name": "Leonardo"
+                      },
+                      "errors": null
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "description": "Update current user",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Token for get current user",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Update current user",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Current user updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "number"
+                        },
+                        "username": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "errors": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/logout": {
+      "delete": {
+        "description": "Logout current user",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Token for get current user",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User logged out successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "boolean"
+                    },
+                    "errors": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
