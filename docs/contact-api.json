@@ -74,30 +74,25 @@
                                         "data": {
                                             "type": "object",
                                             "properties": {
-                                                "data": {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "id": {
-                                                            "type": "number"
-                                                        },
-                                                        "first_name": {
-                                                            "type": "string"
-                                                        },
-                                                        "last_name": {
-                                                            "type": "string"
-                                                        },
-                                                        "email": {
-                                                            "type": "string"
-                                                        },
-                                                        "phone": {
-                                                            "type": "string"
-                                                        }
-                                                    }
+                                                "id": {
+                                                    "type": "number"
                                                 },
-                                                "errors": {
-                                                    "type": "object"
+                                                "first_name": {
+                                                    "type": "string"
+                                                },
+                                                "last_name": {
+                                                    "type": "string"
+                                                },
+                                                "email": {
+                                                    "type": "string"
+                                                },
+                                                "phone": {
+                                                    "type": "string"
                                                 }
                                             }
+                                        },
+                                        "errors": {
+                                            "type": "object"
                                         }
                                     }
                                 },
