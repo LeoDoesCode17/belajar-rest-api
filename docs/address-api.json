@@ -11,7 +11,7 @@
         }
     ],
     "paths": {
-        "/api/addresses": {
+        "/api/contacts/{id_contact}/addresses": {
             "post": {
                 "description": "Create a new address",
                 "parameters": [
@@ -21,6 +21,14 @@
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "name": "id_contact",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
                         }
                     }
                 ],
@@ -128,11 +136,19 @@
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    {
+                        "name": "id_contact",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Success get addresses",
+                        "description": "Success get list addresses",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -175,7 +191,7 @@
                 }
             }
         },
-        "/api/addresses/{id}": {
+        "/api/contacts/{id_contact}/addresses/{id_address}": {
             "put": {
                 "description": "Update an address",
                 "parameters": [
@@ -188,7 +204,15 @@
                         }
                     },
                     {
-                        "name": "id",
+                        "name": "id_contact",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "id_address",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -285,7 +309,15 @@
                         }
                     },
                     {
-                        "name": "id",
+                        "name": "id_contact",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "id_address",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -361,7 +393,15 @@
                         }
                     },
                     {
-                        "name": "id",
+                        "name": "id_contact",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "id_address",
                         "in": "path",
                         "required": true,
                         "schema": {
