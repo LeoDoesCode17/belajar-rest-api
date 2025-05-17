@@ -234,6 +234,9 @@
                             "schema": {
                                 "type": "object",
                                 "properties": {
+                                    "id": {
+                                        "type": "number"
+                                    },
                                     "first_name": {
                                         "type": "string"
                                     },
