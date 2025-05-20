@@ -12,4 +12,10 @@ class Contact extends Model
     protected $keyType = 'int';
     public $timestamps = true;
     public $incrementing = true;
+
+    // relation between contact and user
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(Contact::class, 'user_id', 'id');
+    }
 }
