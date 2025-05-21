@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+use function PHPSTORM_META\map;
+
 class User extends Model
 {
     // Table attributes
@@ -13,6 +15,11 @@ class User extends Model
     protected $keyType = 'int';
     public $timestamps = true;
     public $incrementing = true;
+    protected $fillable = [
+        'username',
+        'password',
+        'name'
+    ];
 
     public function contacts(): HasMany
     {
