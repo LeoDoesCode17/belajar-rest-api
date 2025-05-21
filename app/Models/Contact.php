@@ -17,7 +17,7 @@ class Contact extends Model
     // relation between contact and user
     public function user(): BelongsTo
     {
-        return $this->belongsTo(Contact::class, 'user_id', 'id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     public function addresses(): HasMany
