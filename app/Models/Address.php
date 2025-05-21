@@ -15,6 +15,6 @@ class Address extends Model
 
     public function contact(): BelongsTo
     {
-        return $this->belongsTo(Address::class, 'contact_id', 'id');
+        return $this->belongsTo(Contact::class, 'contact_id', 'id');
     }
 }
