@@ -85,14 +85,37 @@ test('User login successfully.', function () {
     $this->assertNotNull($user->token);
 });
 
-test('User login failed.', function () {
+test('User login failed credentials wrong.', function () {
     $this->seed([UserSeeder::class]);
     $this->post('/api/users/login', [
         'username' => 'creator09',
-        'password' => '123456789'
+        'password' => '123456789' // wrong password
     ])->assertStatus(401)->assertJson([
         'errors' => [
             'message' => ['Wrong credentials']
+        ]
+    ]);
+});
+
+test('Get authenticated user successful.', function () {
+    $this->seed([UserSeeder::class]);
+    $this->get('/api/users/current', [
+        'Authorization' => 'TEKNIK' // the user already logged in (considered)
+    ])->assertStatus(200)->assertJson([
+        'data' => [
+            'username' => 'creator09',
+            'name' => 'Leonardo',
+        ]
+    ]);
+});
+
+test('Unauthorized get current user failed.', function () {
+    $this->seed([UserSeeder::class]);
+    $this->get('/api/users/current', [
+        'Authorization' => null // unauthorized user
+    ])->assertStatus(401)->assertJson([
+        'errors' => [
+            'message' => ['unauthorized']
         ]
     ]);
 });
