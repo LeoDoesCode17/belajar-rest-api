@@ -12,18 +12,9 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function register(UserRegisterRequest $requets): JsonResponse
+    public function register(UserRegisterRequest $request): JsonResponse
     {
-        $data = $requets->validated();
-
-        if (User::where('username', $data['username'])->count() > 0) {
-            // if the username already registered
-            throw new HttpResponseException(response([
-                'errors' => [
-                    'username' => 'Username already registered'
-                ]
-            ], 400));
-        }
+        $data = $request->validated();
 
         $user = new User($data);
         $user->password = Hash::make($data['password']);
