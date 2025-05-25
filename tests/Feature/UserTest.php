@@ -5,6 +5,8 @@ use App\Models\User;
 use Database\Seeders\UserSeeder;
 use Illuminate\Support\Facades\Hash;
 
+use function PHPUnit\Framework\assertEquals;
+use function PHPUnit\Framework\assertNotEquals;
 use function PHPUnit\Framework\assertNotNull;
 
 uses(RefreshDatabase::class);
@@ -99,9 +101,9 @@ test('User login failed credentials wrong.', function () {
 
 test('Get authenticated user successful.', function () {
     $this->seed([UserSeeder::class]);
-    $this->get('/api/users/current', [
-        'Authorization' => 'TEKNIK' // the user already logged in (considered)
-    ])->assertStatus(200)->assertJson([
+    $this->withHeaders([
+        'Authorization' => 'TEKNIK'
+    ])->get('/api/users/current')->assertStatus(200)->assertJson([
         'data' => [
             'username' => 'creator09',
             'name' => 'Leonardo',
@@ -111,11 +113,79 @@ test('Get authenticated user successful.', function () {
 
 test('Unauthorized get current user failed.', function () {
     $this->seed([UserSeeder::class]);
-    $this->get('/api/users/current', [
-        'Authorization' => null // unauthorized user
-    ])->assertStatus(401)->assertJson([
+    $this->withHeaders([
+        'Autorization' => null
+    ])->get('/api/users/current')->assertStatus(401)->assertJson([
         'errors' => [
             'message' => ['unauthorized']
         ]
     ]);
+});
+
+test('Update name success.', function () {
+    $this->seed([UserSeeder::class]);
+    $oldName = User::where('username', 'creator09')->first()->name;
+    $this->withHeaders([
+        'Authorization' => 'TEKNIK'
+    ])->patch('/api/users/current', [
+        'name' => 'Aldo'
+    ])->assertStatus(200)->assertJson([
+        'data' => [
+            'username' => 'creator09',
+            'name' => 'Aldo',
+        ]
+    ]);
+    $newName = User::where('username', 'creator09')->first()->name;
+    assertNotEquals($oldName, $newName);
+});
+
+test('Update password success.', function () {
+    $this->seed([UserSeeder::class]);
+    $oldPassword = User::where('username', 'creator09')->first()->password;
+    $this->withHeaders([
+        'Authorization' => 'TEKNIK'
+    ])->patch('/api/users/current', [
+        'password' => 'new_password'
+    ])->assertStatus(200)->assertJson([
+        'data' => [
+            'username' => 'creator09',
+            'name' => 'Leonardo'
+        ]
+    ]);
+    $newPassword = User::where('username', 'creator09')->first()->password;
+    assertNotEquals($oldPassword, $newPassword);
+});
+
+test('Update password failed due to exceed length limit.', function () {
+    $this->seed([UserSeeder::class]);
+    $oldPassword = User::where('username', 'creator09')->first()->password;
+    $this->withHeaders([
+        'Authorization' => 'TEKNIK'
+    ])->patch('/api/users/current', [
+        'password' => 'fKeUYazLDQREtmIb1whMG2nAO8rjVZCl7qpHdJTk54NgBFExycus0vSWXRPYoi936aGzbKmhqfUn3pMwVJdLrtZCnX
+leapiejgiejaoie'
+    ])->assertStatus(400)->assertJson([
+        'errors' => [
+            'password' => ['The password field must not be greater than 100 characters.']
+        ]
+    ]);
+    $newPassword = User::where('username', 'creator09')->first()->password;
+    assertEquals($oldPassword, $newPassword);
+});
+
+test('Update name failed due to exceed length limit.', function () {
+    $this->seed([UserSeeder::class]);
+    $oldName = User::where('username', 'creator09')->first()->name;
+    $this->withHeaders([
+        'Authorization' => 'TEKNIK'
+    ])->patch('/api/users/current', [
+        'name' => 'fKeUYazLDQREtmIb1whMG2nAO8rjVZCl7qpHdJTk54NgBFExycus0vSWXRPYoi936aGzbKmhqfUn3pMwVJdLrtZCnX
+leapiejgiejaoie'
+    ])->assertStatus(400)->assertJson([
+        'errors' => [
+            'name' => ['The name field must not be greater than 100 characters.']
+        ]
+    ]);
+    $newName = User::where('username', 'creator09')->first()->name;
+    assertEquals($oldName, $newName);
 });
