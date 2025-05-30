@@ -13,6 +13,13 @@ class Contact extends Model
     protected $keyType = 'int';
     public $timestamps = true;
     public $incrementing = true;
+    protected $fillable = [
+        'first_name',
+        'last_name',
+        'phone',
+        'email',
+        'user_id'
+    ];
 
     // relation between contact and user
     public function user(): BelongsTo
