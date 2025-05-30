@@ -15,6 +15,7 @@ class ContactController extends Controller
     {
         $data = $request->validated();
         $contact = new Contact($data);
+        $contact->user_id = $request->user()->id;;
         $contact->save();
         return (new ContactResource($contact))->response()->setStatusCode(201);
     }
