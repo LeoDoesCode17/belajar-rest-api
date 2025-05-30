@@ -207,6 +207,18 @@ test('Failed to get a contact by id due to missing/invalid token.', function () 
     ]);
 });
 
+test('Failed to get a contact by id due to the contact belongs to other user.', function () {
+    $this->seed([UserSeeder::class]);
+    $user = User::where('username', 'creator09')->first();
+    $this->withHeaders([
+        'Authorization' => $user->token
+    ])->get("/api/contacts/8")->assertStatus(404)->assertJson([
+        'errors' => [
+            'message' => ['not found']
+        ]
+    ]);
+});
+
 test('Failed to get a contact by id due to not found contact.', function () {
     $this->seed([UserSeeder::class]);
     $user = User::where('username', 'creator09')->first();
