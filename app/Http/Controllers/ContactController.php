@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Contact\ContactCreateRequest;
 use App\Http\Requests\Contact\ContactUpdateRequest;
+use App\Http\Resources\ContactCollection;
 use App\Http\Resources\ContactResource;
 use Illuminate\Http\JsonResponse;
 use App\Models\Contact;
@@ -68,5 +69,29 @@ class ContactController extends Controller
         return response()->json([
             'data' => true
         ])->setStatusCode(200);
+    }
+
+    public function search(Request $request): ContactCollection
+    {
+        $user = Auth::user();
+        $page = $request->input('page', 1); // if doesn't exist then set to 1
+        $size = $request->input('size', 10); // if doesn't exist then set to 10
+        $name = $request->input('name');
+        $email = $request->input('email');
+        $phone = $request->input('phone');
+        $contacts = Contact::where('user_id', $user->id)
+            ->when($name, function ($query, $name) {
+                return $query->where(function ($query) use ($name) {
+                    $query->where('first_name', 'like', "%{$name}%")
+                        ->orWhere('last_name', 'like', "%{$name}%");
+                });
+            })
+            ->when($email, function ($query, $email) {
+                return $query->where('email', 'like', "%{$email}%");
+            })
+            ->when($phone, function ($query, $phone) {
+                return $query->where('phone', 'like', "%{$phone}%");
+            })->paginate($size, $page);
+        return new ContactCollection($contacts);
     }
 }
