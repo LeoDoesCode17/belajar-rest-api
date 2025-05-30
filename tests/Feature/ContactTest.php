@@ -212,13 +212,17 @@ test('Failed to get a contact by id due to not found contact.', function () {
     $user = User::where('username', 'creator09')->first();
     $this->withHeaders([
         'Authorization' => $user->token
-    ])->get("/api/contacts/8")->assertStatus(404);
+    ])->get("/api/contacts/8")->assertStatus(404)->assertJson([
+        'errors' => [
+            'message' => ['not found']
+        ]
+    ]);
 });
 
 test('Succeed to delete a contact.', function () {
     $this->seed([UserSeeder::class]);
     $user = User::where('username', 'creator09')->first();
-     $contact = new Contact([
+    $contact = new Contact([
         'first_name' => 'Leonardo',
         'last_name' => 'Nifinluri',
         'phone' => '082188889999',
