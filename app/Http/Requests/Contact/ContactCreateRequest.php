@@ -28,7 +28,6 @@ class ContactCreateRequest extends FormRequest
             'last_name' => ['nullable', 'max:100'],
             'phone' => ['nullable', 'max:20'],
             'email' => ['nullable', 'max:200'],
-            'user_id' => ['required']
         ];
     }
 
