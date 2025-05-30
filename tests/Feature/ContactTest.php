@@ -67,13 +67,14 @@ test('Failed to create contact due to one field exceed limit length.', function 
 test('Succeed update a contact.', function () {
     $this->seed([UserSeeder::class]);
     $user = User::where('username', 'creator09')->first();
-    $contact = Contact::create([
-        'user_id' => $user->id,
+    $contact = new Contact([
         'first_name' => 'Leonardo',
         'last_name' => 'Nifinluri',
         'phone' => '082188889999',
-        'email' => 'leonardo@gmail.com'
+        'email' => 'leonardo@gmail.com',
     ]);
+    $contact->user_id = $user->id;
+    $contact->save();
     $oldPhone = $contact->phone;
     $contactId = $contact->id;
     $this->withHeaders([
@@ -98,13 +99,14 @@ test('Failed update a contact due to missing/invalid token.', function () {
     $user = User::where('username', 'creator09')->first();
     $user->token = null;
     $user->save();
-    $contact = Contact::create([
-        'user_id' => $user->id,
+    $contact = new Contact([
         'first_name' => 'Leonardo',
         'last_name' => 'Nifinluri',
         'phone' => '082188889999',
-        'email' => 'leonardo@gmail.com'
+        'email' => 'leonardo@gmail.com',
     ]);
+    $contact->user_id = $user->id;
+    $contact->save();
     $contactId = $contact->id;
     $this->withHeaders([
         'Authorization' => $user->token
@@ -120,13 +122,14 @@ test('Failed update a contact due to missing/invalid token.', function () {
 test('Failed update a contact due to one field exceed limit length.', function () {
     $this->seed([UserSeeder::class]);
     $user = User::where('username', 'creator09')->first();
-    $contact = Contact::create([
-        'user_id' => $user->id,
+    $contact = new Contact([
         'first_name' => 'Leonardo',
         'last_name' => 'Nifinluri',
         'phone' => '082188889999',
-        'email' => 'leonardo@gmail.com'
+        'email' => 'leonardo@gmail.com',
     ]);
+    $contact->user_id = $user->id;
+    $contact->save();
     $contactId = $contact->id;
     $this->withHeaders([
         'Authorization' => $user->token
@@ -142,13 +145,14 @@ test('Failed update a contact due to one field exceed limit length.', function (
 test('Succeed to get a contact by id.', function () {
     $this->seed([UserSeeder::class]);
     $user = User::where('username', 'creator09')->first();
-    $contact = Contact::create([
-        'user_id' => $user->id,
+    $contact = new Contact([
         'first_name' => 'Leonardo',
         'last_name' => 'Nifinluri',
         'phone' => '082188889999',
-        'email' => 'leonardo@gmail.com'
+        'email' => 'leonardo@gmail.com',
     ]);
+    $contact->user_id = $user->id;
+    $contact->save();
     $contactId = $contact->id;
     $this->withHeaders([
         'Authorization' => $user->token
@@ -168,13 +172,14 @@ test('Failed to get a contact by id due to missing/invalid token.', function () 
     $user = User::where('username', 'creator09')->first();
     $user->token = null;
     $user->save();
-    $contact = Contact::create([
-        'user_id' => $user->id,
+    $contact = new Contact([
         'first_name' => 'Leonardo',
         'last_name' => 'Nifinluri',
         'phone' => '082188889999',
-        'email' => 'leonardo@gmail.com'
+        'email' => 'leonardo@gmail.com',
     ]);
+    $contact->user_id = $user->id;
+    $contact->save();
     $contactId = $contact->id;
     $this->withHeaders([
         'Authorization' => $user->token
@@ -196,13 +201,14 @@ test('Failed to get a contact by id due to not found contact.', function () {
 test('Succeed to delete a contact.', function () {
     $this->seed([UserSeeder::class]);
     $user = User::where('username', 'creator09')->first();
-    $contact = Contact::create([
-        'user_id' => $user->id,
+     $contact = new Contact([
         'first_name' => 'Leonardo',
         'last_name' => 'Nifinluri',
         'phone' => '082188889999',
-        'email' => 'leonardo@gmail.com'
+        'email' => 'leonardo@gmail.com',
     ]);
+    $contact->user_id = $user->id;
+    $contact->save();
     $contactId = $contact->id;
     $this->withHeaders([
         'Authorization' => $user->token
@@ -216,13 +222,14 @@ test('Failed to delete a contact due to missing/invalid token.', function () {
     $user = User::where('username', 'creator09')->first();
     $user->token = null;
     $user->save();
-    $contact = Contact::create([
-        'user_id' => $user->id,
+    $contact = new Contact([
         'first_name' => 'Leonardo',
         'last_name' => 'Nifinluri',
         'phone' => '082188889999',
-        'email' => 'leonardo@gmail.com'
+        'email' => 'leonardo@gmail.com',
     ]);
+    $contact->user_id = $user->id;
+    $contact->save();
     $contactId = $contact->id;
     $this->withHeaders([
         'Authorization' => $user->token
