@@ -189,3 +189,22 @@ leapiejgiejaoie'
     $newName = User::where('username', 'creator09')->first()->name;
     assertEquals($oldName, $newName);
 });
+
+test('Logout success.', function () {
+    $this->seed([UserSeeder::class]);
+    $this->withHeaders([
+        'Authorization' => 'TEKNIK'
+    ])->delete('/api/users/logout')->assertStatus(200)->assertJson([
+        'data' => true
+    ]);
+});
+test('Logout failed due to unauthorization.', function () {
+    $this->seed([UserSeeder::class]);
+    $this->withHeaders([
+        'Authorization' => null
+    ])->delete('/api/users/logout')->assertStatus(401)->assertJson([
+        'errors' => [
+            'message' => ['unauthorized']
+        ]
+    ]);
+});
