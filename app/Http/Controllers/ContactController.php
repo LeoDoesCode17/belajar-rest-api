@@ -7,7 +7,9 @@ use App\Http\Requests\Contact\ContactUpdateRequest;
 use App\Http\Resources\ContactResource;
 use Illuminate\Http\JsonResponse;
 use App\Models\Contact;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ContactController extends Controller
 {
@@ -30,7 +32,16 @@ class ContactController extends Controller
 
     public function get($id): ContactResource
     {
-        $contact = Contact::findOrFail($id);
+        // can only get contact that belongs to authed user
+        $user = Auth::user();
+        $contact = Contact::where('id', $id)->where('user_id', $user->id)->first();
+        if (!$contact) {
+            throw new HttpResponseException(response()->json([
+                'errors' => [
+                    'message' => ['not found']
+                ]
+            ])->setStatusCode(404));
+        }
         return new ContactResource($contact);
     }
 
