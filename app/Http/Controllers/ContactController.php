@@ -74,7 +74,7 @@ class ContactController extends Controller
     public function search(Request $request): ContactCollection
     {
         $user = Auth::user();
-        // $page = $request->input('page', 1); // if doesn't exist then set to 1 (when i passed this variable after perpage in paginate(), the results are null)
+        $page = $request->input('page', 1); // if doesn't exist then set to 1 (when i passed this variable after perpage in paginate(), the results are null)
         $size = $request->input('size', 10); // if doesn't exist then set to 10
         $name = $request->input('name');
         $email = $request->input('email');
@@ -92,7 +92,7 @@ class ContactController extends Controller
             })
             ->when($phone, function ($query, $phone) {
                 return $query->where('phone', 'like', "%{$phone}%");
-            })->paginate($size);
+            })->paginate($size, ['*'], 'page', $page);
         return new ContactCollection($contacts);
     }
 }
