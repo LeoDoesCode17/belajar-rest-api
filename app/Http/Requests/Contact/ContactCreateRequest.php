@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Contact;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class ContactCreateRequest extends FormRequest
 {
@@ -28,5 +30,12 @@ class ContactCreateRequest extends FormRequest
             'email' => ['nullable', 'max:200'],
             'user_id' => ['required']
         ];
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response([
+            'errors' => $validator->getMessageBag(),
+        ], 400));
     }
 }
