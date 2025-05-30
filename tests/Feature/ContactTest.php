@@ -14,14 +14,12 @@ test('Succeed create a new contact.', function () {
     $this->withHeaders([
         'Authorization' => $user->token
     ])->post('/api/contacts', [
-        'user_id' => $user->id,
         'first_name' => 'Leonardo',
         'last_name' => 'Nifinluri',
         'phone' => '082188889999',
         'email' => 'leonardo@gmail.com'
     ])->assertStatus(201)->assertJson([
         'data' => [
-            'user_id' => $user->id,
             'first_name' => 'Leonardo',
             'last_name' => 'Nifinluri',
             'phone' => '082188889999',
