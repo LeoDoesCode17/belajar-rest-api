@@ -74,11 +74,12 @@ class ContactController extends Controller
     public function search(Request $request): ContactCollection
     {
         $user = Auth::user();
-        $page = $request->input('page', 1); // if doesn't exist then set to 1
+        // $page = $request->input('page', 1); // if doesn't exist then set to 1 (when i passed this variable after perpage in paginate(), the results are null)
         $size = $request->input('size', 10); // if doesn't exist then set to 10
         $name = $request->input('name');
         $email = $request->input('email');
         $phone = $request->input('phone');
+        echo '(' . $name . ', ' . $email . ', ' . $phone . ')';
         $contacts = Contact::where('user_id', $user->id)
             ->when($name, function ($query, $name) {
                 return $query->where(function ($query) use ($name) {
@@ -91,7 +92,7 @@ class ContactController extends Controller
             })
             ->when($phone, function ($query, $phone) {
                 return $query->where('phone', 'like', "%{$phone}%");
-            })->paginate($size, $page);
+            })->paginate($size);
         return new ContactCollection($contacts);
     }
 }
