@@ -292,5 +292,9 @@ test('Failed to delete a contact due to not found contact.', function () {
     $user = User::where('username', 'creator09')->first();
     $this->withHeaders([
         'Authorization' => $user->token
-    ])->delete("/api/contacts/9")->assertStatus(404);
+    ])->delete("/api/contacts/9")->assertStatus(404)->assertJson([
+        'errors' => [
+            'message' => ['not found']
+        ]
+    ]);
 });
