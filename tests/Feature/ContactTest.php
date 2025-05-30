@@ -159,6 +159,20 @@ test('Failed update a contact due to one field exceed limit length.', function (
     ]);
 });
 
+test('Failed update a contact due to not found contact.', function () {
+    $this->seed([UserSeeder::class]);
+    $user = User::where('username', 'creator09')->first();
+    $this->withHeaders([
+        'Authorization' => $user->token
+    ])->patch("/api/contacts/8", [
+        'phone' => '082199994444'
+    ])->assertStatus(404)->assertJson([
+        'errors' => [
+            'message' => ['not found']
+        ]
+    ]);
+});
+
 test('Succeed to get a contact by id.', function () {
     $this->seed([UserSeeder::class]);
     $user = User::where('username', 'creator09')->first();
