@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Contact\ContactCreateRequest;
+use App\Http\Requests\Contact\ContactUpdateRequest;
 use App\Http\Resources\ContactResource;
 use Illuminate\Http\JsonResponse;
 use App\Models\Contact;
@@ -16,5 +17,13 @@ class ContactController extends Controller
         $contact = new Contact($data);
         $contact->save();
         return (new ContactResource($contact))->response()->setStatusCode(201);
+    }
+
+    public function update(ContactUpdateRequest $request, $id): ContactResource
+    {
+        $data = $request->validated();
+        $contact = Contact::findOrFail($id);
+        $contact->update($data);
+        return new ContactResource($contact);
     }
 }
