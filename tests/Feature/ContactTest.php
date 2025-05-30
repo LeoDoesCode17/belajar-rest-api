@@ -2,9 +2,12 @@
 
 use App\Models\Contact;
 use App\Models\User;
+use Database\Seeders\ContactSearchSeeder;
 use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Log;
 
+use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertNotEquals;
 
 uses(RefreshDatabase::class);
@@ -297,4 +300,89 @@ test('Failed to delete a contact due to not found contact.', function () {
             'message' => ['not found']
         ]
     ]);
+});
+
+test('Success search first name by name parameter.', function () {
+    $this->seed([UserSeeder::class, ContactSearchSeeder::class]);
+    $user = User::where('username', 'creator09')->first();
+    $response = $this->withHeaders([
+        'Authorization' => $user->token
+    ])->get('/api/contacts?name=Leonardo')->assertStatus(200)->json();
+    Log::info(json_encode($response, JSON_PRETTY_PRINT));
+    assertEquals(10, $response['meta']['per_page']);
+    assertEquals(10, count($response['data']));
+    assertEquals(20, $response['meta']['total']);
+});
+
+test('Success search last name by name parameter.', function () {
+    $this->seed([UserSeeder::class, ContactSearchSeeder::class]);
+    $user = User::where('username', 'creator09')->first();
+    $response = $this->withHeaders([
+        'Authorization' => $user->token
+    ])->get('/api/contacts?name=Nifinluri')->assertStatus(200)->json();
+    Log::info(json_encode($response, JSON_PRETTY_PRINT));
+    assertEquals(10, $response['meta']['per_page']);
+    assertEquals(10, count($response['data']));
+    assertEquals(20, $response['meta']['total']);
+});
+
+test('Success search phone by phone parameter.', function () {
+    $this->seed([UserSeeder::class, ContactSearchSeeder::class]);
+    $user = User::where('username', 'creator09')->first();
+    $response = $this->withHeaders([
+        'Authorization' => $user->token
+    ])->get('/api/contacts?phone=089999')->assertStatus(200)->json();
+    Log::info(json_encode($response, JSON_PRETTY_PRINT));
+    assertEquals(10, $response['meta']['per_page']);
+    assertEquals(10, count($response['data']));
+    assertEquals(20, $response['meta']['total']);
+});
+
+test('Success search email by email parameter.', function () {
+    $this->seed([UserSeeder::class, ContactSearchSeeder::class]);
+    $user = User::where('username', 'creator09')->first();
+    $response = $this->withHeaders([
+        'Authorization' => $user->token
+    ])->get('/api/contacts?email=@gmail.com')->assertStatus(200)->json();
+    Log::info(json_encode($response, JSON_PRETTY_PRINT));
+    assertEquals(10, $response['meta']['per_page']);
+    assertEquals(10, count($response['data']));
+    assertEquals(20, $response['meta']['total']);
+});
+
+test('Success search using two parameters.', function () {
+    $this->seed([UserSeeder::class, ContactSearchSeeder::class]);
+    $user = User::where('username', 'creator09')->first();
+    $response = $this->withHeaders([
+        'Authorization' => $user->token
+    ])->get('/api/contacts?name=Leonardo&email=leonardo1@gmail.com')->assertStatus(200)->json();
+    Log::info(json_encode($response, JSON_PRETTY_PRINT));
+    assertEquals(10, $response['meta']['per_page']);
+    assertEquals(1, count($response['data']));
+    assertEquals(1, $response['meta']['total']);
+});
+
+test('Success search for parameters value that do not exist.', function () {
+    $this->seed([UserSeeder::class, ContactSearchSeeder::class]);
+    $user = User::where('username', 'creator09')->first();
+    $response = $this->withHeaders([
+        'Authorization' => $user->token
+    ])->get('/api/contacts?name=LeonardoX&email=leonardo1@gmail.com')->assertStatus(200)->json();
+    Log::info(json_encode($response, JSON_PRETTY_PRINT));
+    assertEquals(10, $response['meta']['per_page']);
+    assertEquals(0, count($response['data']));
+    assertEquals(0, $response['meta']['total']);
+});
+
+test('Success search by size(perpage).', function () {
+    $this->seed([UserSeeder::class, ContactSearchSeeder::class]);
+    $user = User::where('username', 'creator09')->first();
+    $response = $this->withHeaders([
+        'Authorization' => $user->token
+    ])->get('/api/contacts?size=5&page=2')->assertStatus(200)->json();
+    Log::info(json_encode($response, JSON_PRETTY_PRINT));
+    assertEquals(5, $response['meta']['per_page']);
+    assertEquals(5, count($response['data']));
+    assertEquals(2, $response['meta']['current_page']);
+    assertEquals(20, $response['meta']['total']);
 });
