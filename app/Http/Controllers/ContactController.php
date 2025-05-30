@@ -32,4 +32,13 @@ class ContactController extends Controller
         $contact = Contact::findOrFail($id);
         return new ContactResource($contact);
     }
+
+    public function delete($id): JsonResponse
+    {
+        $contact = Contact::findOrFail($id);
+        $contact->delete();
+        return response()->json([
+            'data' => true
+        ])->setStatusCode(200);
+    }
 }
