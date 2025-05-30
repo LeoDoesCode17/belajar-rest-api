@@ -47,6 +47,23 @@ test('Failed to create new contact due to missing/invalid token.', function () {
     ]);
 });
 
+test('Failed to create contact due to first name is empty.', function () {
+    $this->seed([UserSeeder::class]); // imitate logged in user
+    $user = User::where('username', 'creator09')->first();
+    $this->withHeaders([
+        'Authorization' => $user->token
+    ])->post('/api/contacts', [
+        'first_name' => '',
+        'last_name' => 'Nifinluri',
+        'phone' => '082188889999',
+        'email' => 'leonardox@gmail.com'
+    ])->assertStatus(400)->assertJson([
+        'errors' => [
+            'first_name' => ['The first name field is required.']
+        ]
+    ]);
+});
+
 test('Failed to create contact due to one field exceed limit length.', function () {
     $this->seed([UserSeeder::class]); // imitate logged in user
     $user = User::where('username', 'creator09')->first();
