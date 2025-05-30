@@ -25,7 +25,15 @@ class ContactController extends Controller
     public function update(ContactUpdateRequest $request, $id): ContactResource
     {
         $data = $request->validated();
-        $contact = Contact::findOrFail($id);
+        $user = Auth::user();
+        $contact = Contact::where('id', $id)->where('user_id', $user->id)->first();
+        if (!$contact) {
+            throw new HttpResponseException(response()->json([
+                'errors' => [
+                    'message' => ['not found']
+                ]
+            ])->setStatusCode(404));
+        }
         $contact->update($data);
         return new ContactResource($contact);
     }
