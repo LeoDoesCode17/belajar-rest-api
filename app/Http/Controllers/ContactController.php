@@ -55,7 +55,15 @@ class ContactController extends Controller
 
     public function delete($id): JsonResponse
     {
-        $contact = Contact::findOrFail($id);
+        $user = Auth::user();
+        $contact = Contact::where('id', $id)->where('user_id', $user->id)->first();
+        if (!$contact) {
+            throw new HttpResponseException(response()->json([
+                'errors' => [
+                    'message' => ['not found']
+                ]
+            ])->setStatusCode(404));
+        }
         $contact->delete();
         return response()->json([
             'data' => true
