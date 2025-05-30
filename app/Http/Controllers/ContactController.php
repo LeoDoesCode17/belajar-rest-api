@@ -26,4 +26,10 @@ class ContactController extends Controller
         $contact->update($data);
         return new ContactResource($contact);
     }
+
+    public function get($id): ContactResource
+    {
+        $contact = Contact::findOrFail($id);
+        return new ContactResource($contact);
+    }
 }
