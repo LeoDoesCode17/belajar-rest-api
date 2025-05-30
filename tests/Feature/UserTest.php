@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertNotEquals;
 use function PHPUnit\Framework\assertNotNull;
+use function PHPUnit\Framework\assertNull;
 
 uses(RefreshDatabase::class);
 test('User register successfully.', function () {
@@ -197,6 +198,8 @@ test('Logout success.', function () {
     ])->delete('/api/users/logout')->assertStatus(200)->assertJson([
         'data' => true
     ]);
+    $user = User::where('username', 'creator09')->first();
+    assertNull($user->token); // make sure the token is deleted
 });
 test('Logout failed due to unauthorization.', function () {
     $this->seed([UserSeeder::class]);
