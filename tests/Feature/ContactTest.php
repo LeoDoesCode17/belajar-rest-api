@@ -36,7 +36,6 @@ test('Failed to create new contact due to missing/invalid token.', function () {
     $this->withHeaders([
         'Authorization' => $user->token
     ])->post('/api/contacts', [
-        'user_id' => $user->id,
         'first_name' => 'Leonardo',
         'last_name' => 'Nifinluri',
         'phone' => '082188889999',
@@ -54,7 +53,6 @@ test('Failed to create contact due to one field exceed limit length.', function 
     $this->withHeaders([
         'Authorization' => $user->token
     ])->post('/api/contacts', [
-        'user_id' => $user->id,
         'first_name' => 'Leonardo',
         'last_name' => 'Nifinluri',
         'phone' => '082188889999099908218888999909990821888899990999082188889999099908218888999909990821888899990999',
