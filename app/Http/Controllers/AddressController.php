@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Address\AddressCreateRequest;
 use App\Http\Requests\Address\AddressUpdateRequest;
+use App\Http\Resources\AddressCollection;
 use App\Http\Resources\AddressResource;
 use App\Models\Address;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -13,6 +14,21 @@ use Illuminate\Support\Facades\Auth;
 
 class AddressController extends Controller
 {
+    public function index($contactId): AddressCollection
+    {
+        $user = Auth::user();
+        $contact = $user->contacts->where('id', $contactId)->first();
+        $addresses = $contact->addresses;
+        if (!$contact || !$addresses) {
+            throw new HttpResponseException(response()->json([
+                'errors' => [
+                    'message' => ['not found']
+                ]
+            ])->setStatusCode(404));
+        }
+        return new AddressCollection($addresses);
+    }
+
     public function create(AddressCreateRequest $request, $contactId): JsonResponse
     {
         // contactId must be found in authed user contacts
