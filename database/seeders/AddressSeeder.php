@@ -26,5 +26,16 @@ class AddressSeeder extends Seeder
                 'contact_id' => $value->id
             ]);
         }
+        foreach ($contacts as $key => $value) {
+            $tempIdx = $key + 11;
+            Address::create([
+                'street' => "Badak$tempIdx",
+                'city' => "Manado$tempIdx",
+                'province' => "Sulawesi Utara",
+                'country' => "Indonesia",
+                'postal_code' => "9023$tempIdx",
+                'contact_id' => $value->id
+            ]);
+        }
     }
 }
