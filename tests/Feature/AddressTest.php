@@ -1,0 +1,111 @@
+<?php
+
+use Database\Seeders\ContactSearchSeeder;
+use Database\Seeders\UserSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Models\User;
+
+uses(RefreshDatabase::class);
+
+test('Succeed to create an address with complete columns value.', function () {
+    $this->seed([UserSeeder::class, ContactSearchSeeder::class]);
+    $user = User::where('username', 'creator09')->first();
+    $contact = $user->contacts->first();
+    $this->withHeaders([
+        'Authorization' => $user->token
+    ])->post('/api/contacts/' . $contact->id . '/addresses', [
+        'street' => 'Badak',
+        'city' => 'Manado',
+        'province' => 'Sulawesi Utara',
+        'country' => 'Indonesia',
+        'postal_code' => '90124',
+    ])->assertStatus(201)->assertJson([
+        'data' => [
+            'street' => 'Badak',
+            'city' => 'Manado',
+            'province' => 'Sulawesi Utara',
+            'country' => 'Indonesia',
+            'postal_code' => '90124',
+        ]
+    ]);
+});
+
+test('Succeed to create an address with empty optional columns.', function () {
+    $this->seed([UserSeeder::class, ContactSearchSeeder::class]);
+    $user = User::where('username', 'creator09')->first();
+    $contact = $user->contacts->first();
+    $this->withHeaders([
+        'Authorization' => $user->token
+    ])->post('/api/contacts/' . $contact->id . '/addresses', [
+        'country' => 'Indonesia',
+        'postal_code' => '90124',
+    ])->assertStatus(201)->assertJson([
+        'data' => [
+            'street' => null,
+            'city' => null,
+            'province' => null,
+            'country' => 'Indonesia',
+            'postal_code' => '90124',
+        ]
+    ]);
+});
+
+test('Failed to create an address using other contact.', function () {
+    $this->seed([UserSeeder::class, ContactSearchSeeder::class]);
+    $user1 = User::where('username', 'creator09')->first();
+    $user2 = User::where('username', 'bowo09')->first();
+    $contact = $user1->contacts->first();
+    $this->withHeaders([
+        'Authorization' => $user2->token
+    ])->post('/api/contacts/' . $contact->id . '/addresses', [
+        'street' => 'Badak',
+        'city' => 'Manado',
+        'province' => 'Sulawesi Utara',
+        'country' => 'Indonesia',
+        'postal_code' => '90124',
+    ])->assertStatus(404)->assertJson([
+        'errors' => [
+            'message' => ['not found']
+        ]
+    ]);
+});
+
+test('Failed to create an address due to missing/invalid token.', function () {
+    $this->seed([UserSeeder::class, ContactSearchSeeder::class]);
+    $user = User::where('username', 'creator09')->first();
+    $user->token = null;
+    $user->save();
+    $contact = $user->contacts->first();
+    $this->withHeaders([
+        'Authorization' => $user->token
+    ])->post('/api/contacts/' . $contact->id . '/addresses', [
+        'street' => 'Badak',
+        'city' => 'Manado',
+        'province' => 'Sulawesi Utara',
+        'country' => 'Indonesia',
+        'postal_code' => '90124',
+    ])->assertStatus(401)->assertJson([
+        'errors' => [
+            'message' => ['unauthorized']
+        ]
+    ]);
+});
+
+test('Failed to create an address due to one column exceeds characters length.', function () {
+    $this->seed([UserSeeder::class, ContactSearchSeeder::class]);
+    $user = User::where('username', 'creator09')->first();
+    $contact = $user->contacts->first();
+    $this->withHeaders([
+        'Authorization' => $user->token
+    ])->post('/api/contacts/' . $contact->id . '/addresses', [
+        'street' => 'Badak',
+        'city' => 'Manado',
+        'province' => 'Sulawesi Utara',
+        'country' => 'Indonesia',
+        'postal_code' => '901249012490124901249012490124',
+    ])->assertStatus(400)->assertJson([
+        'errors' => [
+            'postal_code' => ['The postal code field must not be greater than 10 characters.']
+        ]
+    ]);
+});
