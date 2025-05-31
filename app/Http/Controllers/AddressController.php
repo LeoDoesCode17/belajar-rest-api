@@ -66,4 +66,19 @@ class AddressController extends Controller
             'data' => true
         ])->setStatusCode(200);
     }
+
+    public function show($contactId, $addressId): AddressResource
+    {
+        $user = Auth::user();
+        $contact = $user->contacts->where('id', $contactId)->first();
+        $address = Address::where('id', $addressId)->where('contact_id', $contactId)->first();
+        if (!$contact || !$address) {
+            throw new HttpResponseException(response()->json([
+                'errors' => [
+                    'message' => ['not found']
+                ]
+            ])->setStatusCode(404));
+        }
+        return new AddressResource($address);
+    }
 }
