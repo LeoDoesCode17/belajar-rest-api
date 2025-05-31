@@ -18,6 +18,7 @@ class Contact extends Model
         'last_name',
         'phone',
         'email',
+        'user_id'
     ];
 
     // relation between contact and user
