@@ -38,11 +38,11 @@ class ContactController extends Controller
         return new ContactResource($contact);
     }
 
-    public function get($id): ContactResource
+    public function show($id): ContactResource
     {
         // can only get contact that belongs to authed user
         $user = Auth::user();
-        $contact = Contact::where('id', $id)->where('user_id', $user->id)->first();
+        $contact = $user->contacts->where('id', $id)->first();
         if (!$contact) {
             throw new HttpResponseException(response()->json([
                 'errors' => [
