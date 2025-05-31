@@ -355,3 +355,67 @@ test('Failed to get an address due to not found address.', function () {
         ]
     ]);
 });
+
+test('Succeed get a list of addresses.', function () {
+    $this->seed([UserSeeder::class, ContactSearchSeeder::class, AddressSeeder::class]);
+    $user = User::where('username', 'creator09')->first();
+    $contact = $user->contacts->first();
+    $addresses = $contact->addresses;
+    $response = [
+        'data' => [],
+    ];
+    foreach ($addresses as $address) {
+        $response['data'][] = [
+            'street' => $address->street,
+            'city' => $address->city,
+            'province' => $address->province,
+            'country' => $address->country,
+            'postal_code' => $address->postal_code,
+        ];
+    }
+    $this->withHeaders([
+        'Authorization' => $user->token
+    ])->get('/api/contacts/' . $contact->id . '/addresses')->assertStatus(200)->assertJson($response);
+});
+
+test('Failed to get a list of addresses of other user.', function () {
+    $this->seed([UserSeeder::class, ContactSearchSeeder::class, AddressSeeder::class]);
+    $user1 = User::where('username', 'creator09')->first();
+    $user2 = User::where('username', 'bowo09')->first();
+    $contact = $user1->contacts->first();
+    $this->withHeaders([
+        'Authorization' => $user2->token
+    ])->get('/api/contacts/' . $contact->id . '/addresses')->assertStatus(404)->assertJson([
+        'errors' => [
+            'message' => ['not found']
+        ]
+    ]);
+});
+
+test('Failed to get a list of addresses due to invalid/missing token.', function () {
+    $this->seed([UserSeeder::class, ContactSearchSeeder::class, AddressSeeder::class]);
+    $user = User::where('username', 'creator09')->first();
+    $user->token = null;
+    $user->save();
+    $contact = $user->contacts->first();
+    $addresses = $contact->addresses;
+    $response = [
+        'data' => [],
+    ];
+    foreach ($addresses as $address) {
+        $response['data'][] = [
+            'street' => $address->street,
+            'city' => $address->city,
+            'province' => $address->province,
+            'country' => $address->country,
+            'postal_code' => $address->postal_code,
+        ];
+    }
+    $this->withHeaders([
+        'Authorization' => $user->token
+    ])->get('/api/contacts/' . $contact->id . '/addresses')->assertStatus(401)->assertJson([
+        'errors' => [
+            'message' => ['unauthorized']
+        ]
+    ]);
+});
