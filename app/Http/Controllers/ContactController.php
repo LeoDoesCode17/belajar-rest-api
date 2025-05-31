@@ -17,9 +17,8 @@ class ContactController extends Controller
     public function create(ContactCreateRequest $request): JsonResponse
     {
         $data = $request->validated();
-        $contact = new Contact($data);
-        $contact->user_id = $request->user()->id;;
-        $contact->save();
+        $data['user_id'] = Auth::user()->id;
+        $contact = Contact::create($data);
         return (new ContactResource($contact))->response()->setStatusCode(201);
     }
 
