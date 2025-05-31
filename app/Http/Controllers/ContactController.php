@@ -26,7 +26,7 @@ class ContactController extends Controller
     {
         $data = $request->validated();
         $user = Auth::user();
-        $contact = Contact::where('id', $id)->where('user_id', $user->id)->first();
+        $contact = $user->contacts->where('id', $id)->first();
         if (!$contact) {
             throw new HttpResponseException(response()->json([
                 'errors' => [
