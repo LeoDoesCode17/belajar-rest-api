@@ -15,7 +15,7 @@ class AddressSeeder extends Seeder
     public function run(): void
     {
         $user = User::where('username', 'creator09')->first();
-        $contacts = $user->contacts->get();
+        $contacts = $user->contacts;
         foreach ($contacts as $key => $value) {
             Address::create([
                 'street' => "Badak$key",
