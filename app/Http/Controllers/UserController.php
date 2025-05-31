@@ -21,11 +21,8 @@ class UserController extends Controller
     public function register(UserRegisterRequest $request): JsonResponse
     {
         $data = $request->validated();
-
-        $user = new User($data);
-        $user->password = Hash::make($data['password']);
-        $user->save();
-
+        $data['password'] = Hash::make($data['password']);
+        $user = User::create($data);
         return (new UserResource($user))->response()->setStatusCode(201);
     }
 
@@ -56,13 +53,10 @@ class UserController extends Controller
     {
         $data = $request->validated();
         $user = Auth::user();
-        if (isset($data['name'])) {
-            $user->name = $data['name'];
-        }
         if (isset($data['password'])) {
             $user->password = Hash::make($data['password']);
         }
-        $user->save();
+        $user->update($data);
         return new UserResource($user);
     }
 
