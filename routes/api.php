@@ -20,7 +20,7 @@ Route::middleware(ApiAuthMiddleware::class)->group(function () {
 
     Route::post('/contacts', [ContactController::class, 'create']);
     Route::patch('/contacts/{id}', [ContactController::class, 'update']);
-    Route::get('/contacts/{id}', [ContactController::class, 'get']);
+    Route::get('/contacts/{id}', [ContactController::class, 'show']);
     Route::delete('/contacts/{id}', [ContactController::class, 'delete']);
     Route::get('/contacts', [ContactController::class, 'search']);
     
