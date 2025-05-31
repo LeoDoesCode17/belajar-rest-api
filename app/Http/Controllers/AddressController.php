@@ -35,9 +35,9 @@ class AddressController extends Controller
     public function update(AddressUpdateRequest $request, $contactId, $addressId): AddressResource
     {
         $user = Auth::user();
-        $contacts = $user->contacts->where('id', $contactId)->first();
-        $address = Address::where('id', $addressId)->first();
-        if (!$contacts || !$address) {
+        $contact = $user->contacts->where('id', $contactId)->first();
+        $address = Address::where('id', $addressId)->where('contact_id', $contactId)->first();
+        if (!$contact || !$address) {
             throw new HttpResponseException(response()->json([
                 'errors' => [
                     'message' => ['not found']
@@ -47,5 +47,23 @@ class AddressController extends Controller
         $data = $request->validated();
         $address->update($data);
         return new AddressResource($address);
+    }
+
+    public function delete($contactId, $addressId): JsonResponse
+    {
+        $user = Auth::user();
+        $contact = $user->contacts->where('id', $contactId)->first();
+        $address = Address::where('id', $addressId)->where('contact_id', $contactId)->first();
+        if (!$contact || !$address) {
+            throw new HttpResponseException(response()->json([
+                'errors' => [
+                    'message' => ['not found']
+                ]
+            ])->setStatusCode(404));
+        }
+        $address->delete();
+        return response()->json([
+            'data' => true
+        ])->setStatusCode(200);
     }
 }
