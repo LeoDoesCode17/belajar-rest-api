@@ -18,8 +18,15 @@ class AddressController extends Controller
     {
         $user = Auth::user();
         $contact = $user->contacts->where('id', $contactId)->first();
+        if (!$contact) {
+            throw new HttpResponseException(response()->json([
+                'errors' => [
+                    'message' => ['not found']
+                ]
+            ])->setStatusCode(404));
+        }
         $addresses = $contact->addresses;
-        if (!$contact || !$addresses) {
+        if (!$addresses) {
             throw new HttpResponseException(response()->json([
                 'errors' => [
                     'message' => ['not found']
