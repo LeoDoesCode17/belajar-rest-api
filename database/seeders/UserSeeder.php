@@ -25,6 +25,6 @@ class UserSeeder extends Seeder
             'password' => Hash::make('12345678'),
             'name' => 'Bowo',
             'token' => 'BOWO'
-        ])
+        ]);
     }
 }
