@@ -292,3 +292,66 @@ test('Failed to delete an address due to not found address.', function () {
     $deletedAddress = App\Models\Address::where('id', $address->id)->first();
     assertNotNull($deletedAddress);
 });
+
+test('Succeed get an address.', function () {
+    $this->seed([UserSeeder::class, ContactSearchSeeder::class, AddressSeeder::class]);
+    $user = User::where('username', 'creator09')->first();
+    $contact = $user->contacts->first();
+    $address = $contact->addresses->first();
+    $this->withHeaders([
+        'Authorization' => $user->token
+    ])->get('/api/contacts/' . $contact->id . '/addresses/' . $address->id)->assertStatus(200)->assertJson([
+        'data' => [
+            'street' => $address->street,
+            'city' => $address->city,
+            'province' => $address->province,
+            'country' => $address->country,
+            'postal_code' => $address->postal_code,
+        ]
+    ]);
+});
+
+test('Failed to get an address of other user.', function () {
+    $this->seed([UserSeeder::class, ContactSearchSeeder::class, AddressSeeder::class]);
+    $user1 = User::where('username', 'creator09')->first();
+    $user2 = User::where('username', 'bowo09')->first();
+    $contact = $user1->contacts->first();
+    $address = $contact->addresses->first();
+    $this->withHeaders([
+        'Authorization' => $user2->token
+    ])->get('/api/contacts/' . $contact->id . '/addresses/' . $address->id)->assertStatus(404)->assertJson([
+        'errors' => [
+            'message' => ['not found']
+        ]
+    ]);
+});
+
+test('Failed to get an address due to invalid/missing token.', function () {
+    $this->seed([UserSeeder::class, ContactSearchSeeder::class, AddressSeeder::class]);
+    $user = User::where('username', 'creator09')->first();
+    $user->token = null;
+    $user->save();
+    $contact = $user->contacts->first();
+    $address = $contact->addresses->first();
+    $this->withHeaders([
+        'Authorization' => $user->token
+    ])->get('/api/contacts/' . $contact->id . '/addresses/' . $address->id)->assertStatus(401)->assertJson([
+        'errors' => [
+            'message' => ['unauthorized']
+        ]
+    ]);
+});
+
+test('Failed to get an address due to not found address.', function () {
+    $this->seed([UserSeeder::class, ContactSearchSeeder::class, AddressSeeder::class]);
+    $user = User::where('username', 'creator09')->first();
+    $contact = $user->contacts->first();
+    $address = $contact->addresses->first();
+    $this->withHeaders([
+        'Authorization' => $user->token
+    ])->get('/api/contacts/' . $contact->id . '/addresses/' . ($address->id + 100))->assertStatus(404)->assertJson([
+        'errors' => [
+            'message' => ['not found']
+        ]
+    ]);
+});
