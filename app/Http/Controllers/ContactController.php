@@ -56,7 +56,7 @@ class ContactController extends Controller
     public function delete($id): JsonResponse
     {
         $user = Auth::user();
-        $contact = Contact::where('id', $id)->where('user_id', $user->id)->first();
+        $contact = $user->contacts->where('id', $id)->first();
         if (!$contact) {
             throw new HttpResponseException(response()->json([
                 'errors' => [
@@ -78,7 +78,6 @@ class ContactController extends Controller
         $name = $request->input('name');
         $email = $request->input('email');
         $phone = $request->input('phone');
-        echo '(' . $name . ', ' . $email . ', ' . $phone . ')';
         $contacts = Contact::where('user_id', $user->id)
             ->when($name, function ($query, $name) {
                 return $query->where(function ($query) use ($name) {
