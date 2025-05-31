@@ -25,4 +25,5 @@ Route::middleware(ApiAuthMiddleware::class)->group(function () {
     Route::get('/contacts', [ContactController::class, 'search']);
     
     Route::post('/contacts/{contactId}/addresses', [AddressController::class, 'create']);
+    Route::put('/contacts/{contactId}/addresses/{addressId}', [AddressController::class, 'update']);
 });
